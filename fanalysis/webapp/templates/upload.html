@@ -57,6 +57,7 @@ html, body {height: 300%;}
                             <option value="rf">Random Forest</option>
                             <option value="lr">Logistic Regression</option>
                             <option value="svm">Support Vector Machines</option>
+                            <option value="dt">Decision Tree</option>
                         </select>
                     </p>
 
@@ -106,14 +107,14 @@ html, body {height: 300%;}
 
         <p> Recall</p>
 
-        <b>
+        <p>
             <div class="progress">
                 <div class="progress-bar bg-warning " role="progressbar" style="width: {{ rec }}%;" aria-valuenow="{{ rec }}"
                      aria-valuemin="0"
                      aria-valuemax="100"> {{ rec }}%
                 </div>
             </div>
-        </b>
+        </p>
 
         <p> F1-Score </p>
 
@@ -153,10 +154,9 @@ html, body {height: 300%;}
             <p>
                 <label for="attackTypeSelect">Attack model</label>
                 <select type="text" id="attackTypeSelect" name="attackTypeSelect">
-                    <option value="fgm">Fast Gradient Method</option>
                     <option value="zoo">Zeroth Order Optimisation</option>
                     <option value="dp">DeepFool</option>
-                    <option value="fa">Feature Adversaries</option>
+                    <option value="en">ElasticNet</option>
                 </select>
             </p>
 
@@ -171,7 +171,9 @@ html, body {height: 300%;}
             </p>
             </p>
         </form>
+        {% endif %}
 
+        {% if isAttack %}
         <p>Adversarial Training Accuracy</p>
         <p>
         <div class="progress">
@@ -206,14 +208,14 @@ html, body {height: 300%;}
 
         <p> Recall</p>
 
-        <b>
+        <p>
             <div class="progress">
                 <div class="progress-bar bg-danger " role="progressbar" style="width: {{ a_rec }}%;" aria-valuenow="{{ a_rec }}"
                      aria-valuemin="0"
                      aria-valuemax="100"> {{ a_rec }}%
                 </div>
             </div>
-        </b>
+        </p>
 
         <p> F1-Score </p>
 
@@ -265,7 +267,9 @@ html, body {height: 300%;}
             </p>
             </p>
         </form>
+        {% endif %}
 
+        {% if isDefence %}
         <p> Adversarial Defence Final Accuracy </p>
 
         <p>
@@ -289,14 +293,14 @@ html, body {height: 300%;}
 
         <p> Recall</p>
 
-        <b>
+        <p>
             <div class="progress">
                 <div class="progress-bar bg-warning " role="progressbar" style="width: {{ ad_rec }}%;" aria-valuenow="{{ ad_rec }}"
                      aria-valuemin="0"
                      aria-valuemax="100"> {{ ad_rec }}%
                 </div>
             </div>
-        </b>
+        </p>
 
         <p> F1-Score </p>
 

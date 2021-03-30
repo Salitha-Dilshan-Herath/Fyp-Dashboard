@@ -11,8 +11,8 @@ class Home(TemplateView):
 
 
 data_preprocessing_obj = ""
-rfc, acc, prec, rec, f1, score_train, score_test = 0, 0, 0, 0, 0, 0, 0
-isUpload,isSettings,isTrain,isAttack = False,False,False,False
+rfc, acc, prec, rec, f1, ad_prec, ad_rec,ad_f1, score_train, score_test = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+isUpload,isSettings,isTrain,isAttack, isDefence = False, False, False, False, False
 
 
 def upload(request):
@@ -20,7 +20,7 @@ def upload(request):
 
     global data_preprocessing_obj
     global isUpload, isSettings,isTrain,isAttack
-    global rfc, acc, prec, rec, f1, score_train, score_test
+    global rfc, acc, prec, rec, f1, ad_prec, ad_rec,ad_f1, score_train, score_test
 
     if request.method == 'POST':
 
@@ -70,16 +70,19 @@ def upload(request):
             context['isSettings'] = isSettings
 
             percentage = int(request.GET.get('amount', '100'))
+            attack_type = request.GET['attackTypeSelect']
             data_preprocessing_obj.dataPercentage = percentage / 100
+            data_preprocessing_obj.selectedAttackType = attack_type
+
             print("tap attack button")
 
-            score_train, score_test, prec, rec, f1 = data_preprocessing_obj.attack()
+            score_train, score_test, ad_prec, ad_rec, ad_f1 = data_preprocessing_obj.attack()
 
             context['score_train'] = round((score_train * 100), 2)
             context['score_test'] = round((score_test * 100), 2)
-            context['a_prec'] = round((prec * 100), 2)
-            context['a_rec'] = round((rec * 100), 2)
-            context['a_f1'] = round((f1 * 100), 2)
+            context['a_prec'] = round((ad_prec * 100), 2)
+            context['a_rec'] = round((ad_rec * 100), 2)
+            context['a_f1'] = round((ad_f1 * 100), 2)
 
             isAttack = True
             context['isAttack'] = isAttack
@@ -90,9 +93,10 @@ def upload(request):
             context['prec'] = round((prec * 100), 2)
             context['rec'] = round((rec * 100), 2)
             context['f1'] = round((f1 * 100), 2)
-            context['a_prec'] = round((prec * 100), 2)
-            context['a_rec'] = round((rec * 100), 2)
-            context['a_f1'] = round((f1 * 100), 2)
+
+            context['a_prec'] = round((ad_prec * 100), 2)
+            context['a_rec'] = round((ad_rec * 100), 2)
+            context['a_f1'] = round((ad_f1 * 100), 2)
             context['isUpload'] = isUpload
             context['isAttack'] = isAttack
             context['isSettings'] = isSettings
@@ -107,5 +111,7 @@ def upload(request):
             context['ad_prec'] = round((prec * 100), 2)
             context['ad_rec'] = round((rec * 100), 2)
             context['ad_f1'] = round((f1 * 100), 2)
+            isDefence = True
+            context['isDefence'] = isDefence
 
     return render(request, 'upload.html', context)

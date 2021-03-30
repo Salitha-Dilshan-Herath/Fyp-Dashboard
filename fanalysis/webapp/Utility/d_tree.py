@@ -1,6 +1,5 @@
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import classification_report, accuracy_score
+from sklearn import tree
+from sklearn.metrics import  accuracy_score
 from sklearn.metrics import precision_score, recall_score
 from sklearn.metrics import f1_score, matthews_corrcoef
 from sklearn.metrics import confusion_matrix
@@ -9,7 +8,7 @@ from sklearn import metrics
 import seaborn as sns
 
 
-class LoRegression:
+class DTree:
 
     def __init__(self, xTrain, yTrain, yTest, xTest):
         self.xTrain = xTrain
@@ -19,7 +18,7 @@ class LoRegression:
 
     def model_train(self):
         # random forest model creation
-        rfc = LogisticRegression()
+        rfc = tree.DecisionTreeClassifier()
         rfc.fit(self.xTrain, self.yTrain)
         # predictions
 
