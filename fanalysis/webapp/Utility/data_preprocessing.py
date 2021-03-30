@@ -4,14 +4,20 @@ import os
 from imblearn.over_sampling import SMOTE
 from sklearn.model_selection import train_test_split
 from sklearn.feature_selection import VarianceThreshold
+
+from .dp_attack import DPAdvAttack
+from .en_attack import ENAdvAttack
+from .zoo_attack import ZooAdvAttack
+
 from .random_forest import RandomForest
 from .lo_regression import LoRegression
-from .zoo_attack import ZooAdvAttack
+from .d_tree import DTree
+
 from .adversarial_defence import AdversarialDefence
 
 
-
 class DataPreprocessing:
+
     df = pd.DataFrame()
     dataPercentage = 0.1
 
@@ -94,12 +100,28 @@ class DataPreprocessing:
 
             return rfc, acc, prec, rec, f1
 
+        elif self.selectedTrainingModel == "dt":
+            rf_obj = DTree(self.X_train_var, self.yTrain, self.yTest, self.X_test_var)
+            rfc, acc, prec, rec, f1 = rf_obj.model_train()
+            self.trainModel = rfc
+
+            return rfc, acc, prec, rec, f1
+
     def attack(self):
 
         if self.selectedAttackType == "zoo":
             at_obj = ZooAdvAttack(self.X_train_var, self.yTrain, self.yTest, self.X_test_var, self.trainModel)
             score_train, score_test, self.x_train_adv, self.x_test_adv, prec, rec, f1 = at_obj.generate_attack()
+            return score_train, score_test, prec, rec, f1
 
+        elif self.selectedAttackType == "en":
+            at_obj = ENAdvAttack(self.X_train_var, self.yTrain, self.yTest, self.X_test_var, self.trainModel)
+            score_train, score_test, self.x_train_adv, self.x_test_adv, prec, rec, f1 = at_obj.generate_attack()
+            return score_train, score_test, prec, rec, f1
+
+        elif self.selectedAttackType == "dp":
+            at_obj = DPAdvAttack(self.X_train_var, self.yTrain, self.yTest, self.X_test_var, self.trainModel)
+            score_train, score_test, self.x_train_adv, self.x_test_adv, prec, rec, f1 = at_obj.generate_attack()
             return score_train, score_test, prec, rec, f1
 
     def defence(self):
@@ -107,6 +129,6 @@ class DataPreprocessing:
         if self.selectedDefenceType == "adv_train":
             df_obj = AdversarialDefence(self.X_train_var, self.x_train_adv, self.x_test_adv, self.yTrain, self.yTest,
                                         self.trainModel)
-            acc,  prec, rec, f1 = df_obj.defence()
+            acc, prec, rec, f1 = df_obj.defence()
 
-            return acc,  prec, rec, f1
+            return acc, prec, rec, f1
