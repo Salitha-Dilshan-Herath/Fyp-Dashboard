@@ -58,22 +58,18 @@ class DataPreprocessing:
         X = self.df.drop([self.selectedParameter], axis=1)
         Y = self.df[self.selectedParameter]
 
-        # getting just the values for the sake of processing
-        # (its a numpy array with no columns)
-        xData = X.values
-        yData = Y.values
+        #Implement smothe function for class imblance
 
         sm = SMOTE(k_neighbors=2)
-
-        X_train_over, y_train_over = sm.fit_resample(xData, yData)
+        X_train_over, y_train_over = sm.fit_resample(X.values, Y.values)
 
         # split the data into training and testing sets
-        xTrain, xTest, yTrain, yTest = train_test_split(X_train_over, y_train_over, test_size=0.2, random_state=42)
+        xDataTrain, xDataTest, yTrain, yTest = train_test_split(X_train_over, y_train_over, test_size=0.2, random_state=42)
 
         var = VarianceThreshold(threshold=.5)
-        var.fit(xTrain, yTrain)
-        X_train_var = var.transform(xTrain)
-        X_test_var = var.transform(xTest)
+        var.fit(xDataTrain, yTrain)
+        X_train_var = var.transform(xDataTrain)
+        X_test_var = var.transform(xDataTest)
 
         self.X_train_var = X_train_var
         self.X_test_var = X_test_var

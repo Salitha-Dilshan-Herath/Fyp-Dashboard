@@ -2,7 +2,7 @@ from art.estimators.classification import SklearnClassifier
 from art.attacks.evasion import DeepFool
 from sklearn.metrics import precision_score, recall_score
 from sklearn.metrics import f1_score
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt_curve
 import seaborn as sns
 from sklearn import metrics
 from sklearn.metrics import confusion_matrix
@@ -10,11 +10,11 @@ from sklearn.metrics import confusion_matrix
 
 class DPAdvAttack:
 
-    def __init__(self, xTrain, yTrain, yTest, xTest, model):
-        self.xTrain = xTrain
-        self.yTrain = yTrain
-        self.yTest = yTest
-        self.xTest = xTest
+    def __init__(self, xDataTrain, yDataTrain, yDataTest, xDataTest, model):
+        self.xDataTrain = xDataTrain
+        self.yDataTrain = yDataTrain
+        self.yDataTest = yDataTest
+        self.xDataTest = xDataTest
         self.model = model
         self.dataAmount = 100
 
@@ -25,47 +25,47 @@ class DPAdvAttack:
                       nb_grads=20, batch_size=1)
 
         print("Start DPAdvAttack attack")
-        x_train_adv = dp.generate(self.xTrain[:self.dataAmount])
+        x_train_adv = dp.generate(self.xDataTrain[:self.dataAmount])
 
-        score_train = self.model.score(x_train_adv, self.yTrain[:self.dataAmount])
+        score_train = self.model.score(x_train_adv, self.yDataTrain[:self.dataAmount])
         print("Adversarial Training Score: %.4f" % score_train)
 
-        x_test_adv = dp.generate(self.xTest[:self.dataAmount])
+        x_test_adv = dp.generate(self.xDataTest[:self.dataAmount])
 
-        score_test = self.model.score(x_test_adv, self.yTest[:self.dataAmount])
+        score_test = self.model.score(x_test_adv, self.yDataTest[:self.dataAmount])
         print("Adversarial Test Score: %.4f" % score_test)
 
-        yPred = self.model.predict(x_test_adv)
+        yRPred = self.model.predict(x_test_adv)
 
-        prec = precision_score(self.yTest[:self.dataAmount], yPred)
-        print("The precision is {}".format(prec))
+        prec = precision_score(self.yDataTest[:self.dataAmount], yRPred)
+        print("precision value is {}".format(prec))
 
-        rec = recall_score(self.yTest[:self.dataAmount], yPred)
-        print("The recall is {}".format(rec))
+        rec = recall_score(self.yDataTest[:self.dataAmount], yRPred)
+        print("recall value is {}".format(rec))
 
-        f1 = f1_score(self.yTest[:self.dataAmount], yPred)
-        print("The F1-Score is {}".format(f1))
+        f1 = f1_score(self.yDataTest[:self.dataAmount], yRPred)
+        print("F1-Score value is {}".format(f1))
 
         y_pred_proba = self.model.predict_proba(x_test_adv)[::, 1]
-        fpr, tpr, _ = metrics.roc_curve(self.yTest[:self.dataAmount], y_pred_proba)
+        fpr, tpr, _ = metrics.roc_curve(self.yDataTest[:self.dataAmount], y_pred_proba)
 
-        plt.figure(figsize=(4, 4))
-        plt.plot([0, 1], [0, 1], linestyle='--')
-        # plot the roc curve for the model
-        plt.plot(fpr, tpr, marker='.', label='ROC Curve')
-        plt.title('ROC Curve')
-        plt.ylabel('True Positive Rate')
-        plt.xlabel('False Positive Rate')
-        plt.savefig('media/a_env_roc.png', dpi=100)
-        plt.legend()
+        plt_curve.figure(figsize=(4, 4))
+        plt_curve.plot([0, 1], [0, 1], linestyle='--')
+        # genarate the roc_curve for the model
+        plt_curve.plot(fpr, tpr, marker='.', label='ROC Curve')
+        plt_curve.title('ROC Curve')
+        plt_curve.ylabel('True Positive Rate')
+        plt_curve.xlabel('False Positive Rate')
+        plt_curve.savefig('media/a_env_roc.png', dpi=100)
+        plt_curve.legend()
 
-        LABELS = ['Normal', 'Fraud']
-        conf_matrix = confusion_matrix(self.yTest[:self.dataAmount], yPred)
-        plt.figure(figsize=(4, 4))
-        sns.heatmap(conf_matrix, xticklabels=LABELS, yticklabels=LABELS, annot=True, fmt="d");
-        plt.title("Confusion matrix")
-        plt.ylabel('True class')
-        plt.xlabel('Predicted class')
-        plt.savefig('media/a_env_confusion_matrix.png', dpi=100)
+        axiesLables = ['Normal', 'Fraud']
+        conf_matrix = confusion_matrix(self.yDataTest[:self.dataAmount], yRPred)
+        plt_curve.figure(figsize=(4, 4))
+        sns.heatmap(conf_matrix, xticklabels=axiesLables, yticklabels=axiesLables, annot=True, fmt="d");
+        plt_curve.title("Confusion matrix")
+        plt_curve.ylabel('True class')
+        plt_curve.xlabel('Predicted class')
+        plt_curve.savefig('media/a_env_confusion_matrix.png', dpi=100)
 
         return score_train, score_test, x_train_adv, x_test_adv, prec, rec, f1

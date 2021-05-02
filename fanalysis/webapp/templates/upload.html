@@ -13,9 +13,22 @@
     padding:10px;
     border-style: solid;
     border-radius: 5px;
- }
+  }
 
-html, body {height: 300%;}
+   a:link, a:visited {
+      background-color: blue;
+      color: white;
+      padding: 14px 25px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    a:hover, a:active {
+      background-color: blue;
+    }
+
+    html, body {height: 300%;}
 
 </style>
 
@@ -24,7 +37,7 @@ html, body {height: 300%;}
         <h4>Upload</h4> <br>
         <form method="post" enctype="multipart/form-data" id="dataset">
             {% csrf_token %}
-            <input type="file" name="document">
+            <input type="file" name="document" accept=".csv">
             <button type="submit" name="btnUpload">Upload file</button>
         </form>
     </div>
@@ -320,6 +333,9 @@ html, body {height: 300%;}
         <p>
             <img src= "/media/ad_env_confusion_matrix.png"/>
         </p>
+
+        <a  href="/media/model.pkl" download> Download </a>
+
         {% endif %}
 
     </div>
